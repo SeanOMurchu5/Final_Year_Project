@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">Final Year Project</string>
+    <string name="resetPassword">Reset Password</string>
+    <string name="changeDetails">Change Details</string>
+    <string name="connect">Connect to a node</string>
+    <string name="your_address_will_be_shown_here">your address will be shown here</string>
+    <string name="address">ADDRESS</string>
+    <string name="balance">retrieve balance</string>
+    <string name="send">Send</string>
+    <string name="please_check_your_balance">Your balance will be shown here</string>
+    <string name="your_balance">\"your balance in wei is: \"</string>
+    <string name="enter_eth_value_to_send">Enter eth value to send</string>
+    <string name="create_etherium_wallet">Create ethereum wallet</string>
+    <string name="enter_wallet_name">enter wallet name</string>
+    <string name="please_enter_password">please enter password</string>
+    <string name="connect_to_etherium_network">Connect to ethereum network</string>
+    <string name="send_etherium">Send ethereum</string>
+    <string name="your_address">\"your address is \"</string>
+    <string name="create_wallet">create wallet</string>
+    <string name="balanceofaccountinwei">The balance of your account in wei is:</string>
+    <string name="balanceofaccounteth">The balance of your account in eth is:</string>
+    <string name="gasprice">The default gas price is:</string>
+
+
 </resources>

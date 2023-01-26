@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,6 +20,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
+    String email=null;
+    String password=null;
+    private FirebaseAuth mAuth;
+    EditText emailET;
+    EditText passwordET;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,22 +32,27 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
-        String email = null;
-        String password = null;
+         emailET = findViewById(R.id.emailEditText);
+         passwordET = findViewById(R.id.passwordEditText);
 
         Button LoginInBTN = findViewById(R.id.loginButton);
         LoginInBTN.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                email = emailET.getText().toString();
+                password = passwordET.getText().toString();
+
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>(){
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task){
+                                Log.d("CREATION","email is "+email);
+                                Log.d("CREATION","password is "+password);
                                 if(task.isSuccessful()){
 
-                                    Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                     startActivity(intent);
                                 }else{
                                     Toast toast = Toast.makeText(LoginActivity.this, "Login failed", LENGTH_LONG);
@@ -49,8 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         });
 
-                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                startActivity(intent);
+
             }
         });
 
