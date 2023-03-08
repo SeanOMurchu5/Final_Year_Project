@@ -79,7 +79,7 @@ public class addProduct extends AppCompatActivity {
                 String uniqueId = UUID.randomUUID().toString();
 
 
-                Product prod = new Product(productName,pp,productDescription,sellerAddress,false);
+                Product prod = new Product(productName,pp,productDescription,sellerAddress,false,uniqueId);
 
                 firebaseUsers.child("Products").child(uniqueId).setValue(prod).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

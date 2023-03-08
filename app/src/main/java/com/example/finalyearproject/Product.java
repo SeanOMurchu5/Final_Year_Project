@@ -9,17 +9,27 @@ public class Product implements Serializable {
     private String description;
     private String sellerAddress;
     private boolean status;
+    private String uniqueId;
 
     public Product(){
 
     }
 
-    public Product(String pn, double pp, String desc, String SA, boolean s){
+    public Product(String pn, double pp, String desc, String SA, boolean s,String u){
         this.productName = pn;
         this.productPrice = pp;
         this.description = desc;
         this.sellerAddress = SA;
         this.status = s;
+        this.uniqueId = u;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     public String getProductName() {
