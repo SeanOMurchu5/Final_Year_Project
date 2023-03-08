@@ -5,11 +5,13 @@ import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +66,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -83,6 +86,7 @@ public class paymentActivity extends AppCompatActivity {
     String a;
     String bigint;
 
+
     public paymentActivity() throws ExecutionException, InterruptedException {
     }
 
@@ -90,12 +94,24 @@ public class paymentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
-         credentials = Credentials.create("7712f4f9952f61dba22107d1470979eccacfdd1c381f72db251624dc9d3984a4");
+        Intent intent = getIntent();
+        String key = intent.getStringExtra("key");
+       // credentials = Credentials.create(key);
+        credentials = Credentials.create("0a95592342d8f17f8b712d937d2e9fe356b75b46062ed4552a7e89059d0c669d");
+        String uniqueId = UUID.randomUUID().toString();
 
+        String receiverAddress = intent.getStringExtra("receiver");
+        String senderAddress = intent.getStringExtra("address");
+        double amount = intent.getDoubleExtra("amount",0);
         web3 = Web3j.build(new HttpService("HTTP://192.168.0.127:7545"));
-//change server address and portnumber
+        //change server address and portnumber
 
-
+        BigInteger gasPrice = GAS_PRICE; // replace with the actual gas price you want to use
+        BigInteger gasLimit = GAS_LIMIT;
+        BigDecimal b = Convert.toWei(String.valueOf(amount), Convert.Unit.ETHER);
+        final ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+        TransactionManager manager = new RawTransactionManager(web3, credentials, 200, 500);
+        final BankFactory bfContract = BankFactory.load("0xd78f053BB2c8cAca51844398b01F769b46212322", web3, manager, gasProvider);
         ExecutorService es = Executors.newCachedThreadPool();
 
 
@@ -108,35 +124,18 @@ public class paymentActivity extends AppCompatActivity {
 
                 try {
                     String getFunds;
-                    final BigInteger gasPrice = GAS_PRICE;
-                    final BigInteger gasLimit = GAS_LIMIT;
-                    BigDecimal b = Convert.toWei("1", Convert.Unit.ETHER);
-                    final ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
-                    TransactionManager manager = new RawTransactionManager(web3, credentials, 200, 500);
-                    final BankFactory bfContract = BankFactory.load("0x99AfBcdB259C9b788919D7477Cd172d3A96E763b", web3, manager, gasProvider);
-                    String a = String.valueOf(bfContract.createBank("0x5AC4302A4E4cc2Eb738042eE74253fe3c6f0f109", b.toBigInteger()).send());
-                    getFunds = String.valueOf(bfContract.getBankDetails("0x5AC4302A4E4cc2Eb738042eE74253fe3c6f0f109").send());
-                     bigint = String.valueOf(bfContract.getBank("0x5AC4302A4E4cc2Eb738042eE74253fe3c6f0f109").send()); // <-- throws exception
-// <-- throws exception
-// <-- throws exception
+
+//                    String a = String.valueOf(bfContract.createBank(senderAddress,receiverAddress,uniqueId, b.toBigInteger()).send());
+//                    getFunds = String.valueOf(bfContract.getBankDetails(uniqueId).send());
+//                     bigint = String.valueOf(bfContract.getBank().send());
+                    String a = String.valueOf(bfContract.createBank("0xDFCd1eb65f15f5Fb248579b8251f1A9A33E86f30","0xF945257bb938214e9e15122Fd3C9D56579896705",uniqueId, b.toBigInteger()).send());
+                    bigint = String.valueOf(bfContract.getBankDetails(uniqueId).send());
 
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                //get bank funds
-//                Bank contract = Bank.load(
-//                        "0xF831729EF01a22A47c521Aa493ef1bccEF427a3A",
-//                        web3,
-//                        credentials,
-//                        GAS_PRICE,
-//                        GAS_LIMIT);
-//
-//                try {
-//                    bigint = contract.getBankFunds().send();
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
+
             }
         });
         es.shutdown();
@@ -151,37 +150,40 @@ public class paymentActivity extends AppCompatActivity {
 //     //   ethgptv.setText(gasPrice.getGasPrice().toString());
         ethgptv.setText(bigint);
 
+        Button releaseBTN = findViewById(R.id.releaseBTN);
+        releaseBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ExecutorService es = Executors.newCachedThreadPool();
+                es.execute(new Runnable() {
 
 
-//        Function function1 = new Function(
-//                "getBankDetails", // This is the name of the solidity function in your smart contract
-//                Collections.emptyList(),  // Solidity Types in smart contract functions, no input in the function so we set this to empty
-//                Arrays.asList(new TypeReference<Uint256>() {})); // result will be a string
-//        String encodedFunction = FunctionEncoder.encode(function1);
-//        EthCall ethCall = null;
-//        try {
-//            ethCall = web3.ethCall(
-//                            Transaction.createEthCallTransaction(credentials.getAddress(), "0x9712aA9c5d83d4507fCF1f82Bb483cb2F154b6dc", encodedFunction),
-//                            DefaultBlockParameterName.LATEST)
-//                    .sendAsync().get();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
+
+                    @Override
+                    public void run() {
+                        try {
+                            String bankAddress = bfContract.getBankAddress(uniqueId).send();
+                            Bank bankContract = Bank.load(bankAddress, web3, credentials, gasPrice, gasLimit);
+                            TransactionReceipt receipt = bankContract.sendFunds().send();
+
+                            //String releasefunds = String.valueOf(bfContract.sendFunds(uniqueId).send());
+                            Toast.makeText(getApplicationContext(),"Ether Funds released from Escrow",Toast.LENGTH_SHORT).show();   // <-- throws exception
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            //Toast.makeText(getApplicationContext(),"Ether Funds not released from Escrow",Toast.LENGTH_SHORT).show();   // <-- throws exception
+
+                        }
+                    }
+
+
+        });
         }
 
-//        String value = ethCall.getValue();
-//        List<Type> list = FunctionReturnDecoder.decode(value, function1.getOutputParameters());
-//
-//        System.out.println(list.size());
-        //contract.getBankFunds().call({from:"0xA1130115979522C328e2F90EbD816F4b7CCCEF21"});
 
-
-//        TextView ethbalanceTV = findViewById(R.id.balanceOfaccountweiTVdisplay);
-//        ethbalanceTV.setText(ethGetBalance.getBalance().toString());
-//
-//        TextView ethbalanceethTV = findViewById(R.id.balanceofaccountethTVdisplay);
-//        ethbalanceethTV.setText(ethbalanceeth);
+        });
     }
+
+    }
+
 
 

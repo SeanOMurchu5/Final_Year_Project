@@ -20,6 +20,21 @@
     <string name="balanceofaccountinwei">The balance of your account in wei is:</string>
     <string name="balanceofaccounteth">The balance of your account in eth is:</string>
     <string name="gasprice">The default gas price is:</string>
+    <string name="productName">Enter Product Name</string>
+    <string name="productPrice">Enter Product Price</string>
+    <string name="productDescription">Enter the product description</string>
+    <string name="sellerAddress">Enter your Ethereum wallet Address</string>
+    <string name="enterBTN">Enter</string>
+    <string name="productNameTV">Product Name</string>
+    <string name="productPriceTV">Product Price</string>
+    <string name="productDescriptionTV">Product Description</string>
+    <string name="TransactionId">Transaction ID</string>
+    <string name="TransactionSellerAddressTV">Seller address</string>
+    <string name="TransactionBuyerAddressTV">Buyer address</string>
+    <string name="TransactionAmountTV">Transaction Amount</string>
+    <string name="TransactionStatusTV">Transaction Status</string>
+
+
 
 
 </resources>

@@ -38,12 +38,16 @@ public class HomeActivity extends AppCompatActivity {
                     intent = new Intent(HomeActivity.this, HomeActivity.class);
                     startActivity(intent);
                     break;
+                case R.id.Sell:
+                    intent = new Intent(HomeActivity.this, addProduct.class);
+                    startActivity(intent);
+                    break;
                 case R.id.Account:
                     intent = new Intent(HomeActivity.this, AccountActivity.class);
                     startActivity(intent);
                     break;
                 case R.id.Payment:
-                    intent = new Intent(HomeActivity.this, paymentActivity.class);
+                    intent = new Intent(HomeActivity.this, PaymentTaker.class);
                     startActivity(intent);
                     break;
             }

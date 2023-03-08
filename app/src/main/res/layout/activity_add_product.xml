@@ -4,104 +4,116 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PaymentTaker">
+    tools:context=".addProduct">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Enter Sender Wallet Address"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/keyId" />
-
-    <EditText
-        android:id="@+id/addressET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="wallet address"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="60dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="24dp"
-        android:text="Enter amount of Ether to send"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addressET" />
-
-    <EditText
-        android:id="@+id/amountEthET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Amount of Ether"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-    <Button
-        android:id="@+id/sendEthBTN"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send Eth"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/amountEthET" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:text="Credential Key"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/receiverET" />
-
-    <EditText
-        android:id="@+id/keyId"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Key here"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Payment receiver address"
+        android:text="@string/productName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/receiverET"
+        android:id="@+id/ETproductName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/productPrice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ETproductName" />
+
+    <EditText
+        android:id="@+id/ETproductPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/productDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ETproductPrice" />
+
+    <EditText
+        android:id="@+id/ETproductDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
+
+    <TextView
+        android:id="@+id/textView10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/sellerAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ETproductDescription" />
+
+    <EditText
+        android:id="@+id/ETsellerWallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView10" />
+
+    <Button
+        android:id="@+id/enterBTN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Receiver address"
+        android:text="@string/enterBTN"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/ETsellerWallet" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottonnav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav">
+
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

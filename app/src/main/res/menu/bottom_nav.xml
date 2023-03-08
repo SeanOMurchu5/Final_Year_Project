@@ -9,6 +9,10 @@
         android:id="@+id/Search"
         android:icon="@drawable/searchicon"/>
     <item
+        android:title="Sell"
+        android:id="@+id/Sell"
+        android:icon="@drawable/additionicon"/>
+    <item
         android:title="Account"
         android:id="@+id/Account"
         android:icon="@drawable/accounticon"/>

@@ -10,8 +10,8 @@
         android:id="@+id/GaspriceTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/gasprice"
+        android:layout_marginTop="32dp"
+        android:text="Amount currently in escrow is:"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,49 +20,20 @@
         android:id="@+id/GaspriceTVdisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/GaspriceTV" />
 
-    <TextView
-        android:id="@+id/balanceOfaccountweiTV"
+    <Button
+        android:id="@+id/releaseBTN"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/balanceofaccountinwei"
+        android:text="Release escrow to seller"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/GaspriceTVdisplay" />
 
-    <TextView
-        android:id="@+id/balanceOfaccountweiTVdisplay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/balanceOfaccountweiTV" />
-
-    <TextView
-        android:id="@+id/balanceofaccountethTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/balanceofaccounteth"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/balanceOfaccountweiTVdisplay" />
-
-    <TextView
-        android:id="@+id/balanceofaccountethTVdisplay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/balanceofaccountethTV" />
 </androidx.constraintlayout.widget.ConstraintLayout>
