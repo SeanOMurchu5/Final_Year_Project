@@ -14,16 +14,24 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     String email;
+    String name;
+    String address;
+    String ethAddress;
+    String dob;
     String password;
     String password2;
 
@@ -38,7 +46,10 @@ public class SignUpActivity extends AppCompatActivity {
         EditText emailET = findViewById(R.id.editTextTextEmailAddress);
         EditText passwordET = findViewById(R.id.enterPasswordET);
         EditText passwordET2 = findViewById(R.id.enterPasswordET2);
+        EditText addressET = findViewById(R.id.ETAddress);
+        EditText ethAdressET = findViewById(R.id.ETaddressETH);
 
+        DatabaseReference firebaseUsers = FirebaseDatabase.getInstance().getReference();
 
 
         Button enterBTN = findViewById(R.id.SignUpPageBTN);
@@ -47,6 +58,9 @@ public class SignUpActivity extends AppCompatActivity {
                 email = emailET.getText().toString();
                 password = passwordET.getText().toString();
                 password2 = passwordET2.getText().toString();
+                address = addressET.getText().toString();
+                ethAddress = ethAdressET.getText().toString();
+
 
                 if(password.equals(password2)){
                     mAuth.createUserWithEmailAndPassword(email, password)
@@ -57,10 +71,26 @@ public class SignUpActivity extends AppCompatActivity {
                                         mUser = mAuth.getCurrentUser();
                                         Log.d("MESSAGE","email is "+email);
                                         Log.d("MESSAGE","password is "+password);
+                                        String userID= mUser.getUid();
+                                        User user = new User(name,email,address,ethAddress,userID);
 
+                                        firebaseUsers.child("Users").child(userID).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                Log.d("MESSAGE","Success at database user creation");
+
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+
+                                            @Override
+                                            public void onFailure(@NonNull Exception e){
+                                                Log.d("MESSAGE","Failed at database user creation");
+                                            }
+                                        });
                                         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                                         startActivity(intent);
-                                    } else {
+
+                                    }else {
 
                                         Toast.makeText(SignUpActivity.this, "Authentication failed.",
                                                 Toast.LENGTH_SHORT).show();
