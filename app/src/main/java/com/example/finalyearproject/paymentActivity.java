@@ -3,6 +3,7 @@ package com.example.finalyearproject;
 import static org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT;
 import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,11 +11,18 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.w3c.dom.Text;
 import org.web3j.abi.FunctionEncoder;
@@ -34,7 +42,6 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.Ethereum;
 import org.web3j.protocol.core.RemoteCall;
-import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGasPrice;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
@@ -113,11 +120,16 @@ public class paymentActivity extends AppCompatActivity {
         TransactionManager manager = new RawTransactionManager(web3, credentials, 200, 500);
         final BankFactory bfContract = BankFactory.load("0xd78f053BB2c8cAca51844398b01F769b46212322", web3, manager, gasProvider);
         ExecutorService es = Executors.newCachedThreadPool();
+        //temporary for testing
+        senderAddress="0xDFCd1eb65f15f5Fb248579b8251f1A9A33E86f30";
+        receiverAddress="0xF945257bb938214e9e15122Fd3C9D56579896705";
+        String status = "Funds released";
 
 
         es.execute(new Runnable() {
             @Override
             public void run() {
+
 
 
                 //make new bank
@@ -144,6 +156,24 @@ public class paymentActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        DatabaseReference firebaseUsers = FirebaseDatabase.getInstance().getReference();
+
+        Transaction transaction = new Transaction(senderAddress,receiverAddress,amount,uniqueId,status);
+
+        firebaseUsers.child("Products").child(uniqueId).setValue(transaction).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.d("MESSAGE", "Success at database transaction creation");
+                Toast.makeText(getApplicationContext(), "Created new transaction", Toast.LENGTH_LONG).show();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("MESSAGE", "Failed at database transaction creation");
+            }
+        });
 
 
         TextView ethgptv = findViewById(R.id.GaspriceTVdisplay);

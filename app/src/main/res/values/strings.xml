@@ -33,6 +33,8 @@
     <string name="TransactionBuyerAddressTV">Buyer address</string>
     <string name="TransactionAmountTV">Transaction Amount</string>
     <string name="TransactionStatusTV">Transaction Status</string>
+    <string name="uploadBTN">Upload Product</string>
+    <string name="chooseImageBTN">Choose Image</string>
 
 
 

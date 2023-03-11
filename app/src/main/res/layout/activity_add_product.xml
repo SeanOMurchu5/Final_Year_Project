@@ -96,13 +96,13 @@
 
     <Button
         android:id="@+id/enterBTN"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/enterBTN"
+        android:layout_width="99dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/uploadBTN"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ETsellerWallet" />
+        app:layout_constraintTop_toBottomOf="@+id/chooseImageBTN" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottonnav"
@@ -115,5 +115,25 @@
         app:menu="@menu/bottom_nav">
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/chooseImageBTN"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ETsellerWallet"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/chooseImageBTN"
+        android:layout_width="99dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/chooseImageBTN"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ETsellerWallet" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
