@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.finalyearproject.Activity.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -52,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Log.d("CREATION","password is "+password);
                                 if(task.isSuccessful()){
 
-                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                     startActivity(intent);
                                 }else{
                                     Toast toast = Toast.makeText(LoginActivity.this, "Login failed", LENGTH_LONG);
