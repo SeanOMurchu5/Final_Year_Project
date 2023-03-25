@@ -7,6 +7,7 @@ public class Product implements Serializable {
     private String productName;
     private double productPrice;
     private String description;
+    private String pic;
     private String sellerAddress;
     private boolean status;
     private String uniqueId;
@@ -15,17 +16,26 @@ public class Product implements Serializable {
 
     }
 
-    public Product(String pn, double pp, String desc, String SA, boolean s,String u){
+    public Product(String pn, double pp, String desc, String SA, boolean s,String u,String pic){
         this.productName = pn;
         this.productPrice = pp;
         this.description = desc;
         this.sellerAddress = SA;
         this.status = s;
         this.uniqueId = u;
+        this.pic = pic;
     }
 
     public String getUniqueId() {
         return uniqueId;
+    }
+
+    public String getPic() {
+        return pic;
+    }
+
+    public void setPic(String pic) {
+        this.pic = pic;
     }
 
     public void setUniqueId(String uniqueId) {

@@ -1,5 +1,6 @@
 package com.example.finalyearproject.Adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.finalyearproject.Activity.allApparelActivity;
+import com.example.finalyearproject.Activity.allShoesActivity;
 import com.example.finalyearproject.Domain.CategoryDomain;
 import com.example.finalyearproject.R;
 
@@ -68,7 +71,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return categoryDomains.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView categoryName;
         ImageView categoryPic;
         ConstraintLayout mainLayout;
@@ -77,6 +80,39 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             categoryName = itemView.findViewById(R.id.categoryName);
             categoryPic = itemView.findViewById(R.id.categoryPic);
             mainLayout = itemView.findViewById(R.id.mainLayout);
+            itemView.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = this.getLayoutPosition(); //get the position where the click happened
+            String name =categoryDomains.get(position).getTitle();
+            switch (name){
+                case "Shoes":{
+                    Intent intent = new Intent(view.getContext(), allShoesActivity.class);
+                    view.getContext().startActivity(intent);
+                    break;
+                }
+                case "Apparel":{
+                    Intent intent = new Intent(view.getContext(), allApparelActivity.class);
+                    view.getContext().startActivity(intent);
+                    break;
+                }
+                case "Electronic":{
+
+                    break;
+                }
+                case "Collectibles":{
+
+                    break;
+                }
+                case "Accessories":{
+
+                    break;
+                }
+            }
+
         }
     }
 }

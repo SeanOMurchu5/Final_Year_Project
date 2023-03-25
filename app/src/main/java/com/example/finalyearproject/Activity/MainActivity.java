@@ -1,16 +1,31 @@
 package com.example.finalyearproject.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.finalyearproject.Adapter.CategoryAdapter;
 import com.example.finalyearproject.Adapter.PopularAdapter;
 import com.example.finalyearproject.Domain.CategoryDomain;
 import com.example.finalyearproject.Domain.ProductDomain;
+import com.example.finalyearproject.HomeActivity;
+import com.example.finalyearproject.Product;
 import com.example.finalyearproject.R;
+import com.example.finalyearproject.addProduct;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -18,15 +33,21 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView.Adapter adapter,adapter2;
     private RecyclerView recyclerViewCategoryList,recyclerViewPopularList;
+    DatabaseReference fireDB;
+    ImageView homeBtn,addProductBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
 
         setContentView(R.layout.activity_main);
+        fireDB = FirebaseDatabase.getInstance().getReference("Products");
 
         recyclerViewCategory();
-        recylcerViewPopular();
+        recyclerViewPopular();
+        bottomNavigation();
+
+
     }
 
     private void recyclerViewCategory() {
@@ -45,8 +66,26 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewCategoryList.setAdapter(adapter);
 
     }
+    private void bottomNavigation(){
+        FloatingActionButton floatingActionButton = findViewById(R.id.cartBtn);
+        LinearLayout homeBtn = findViewById(R.id.homeBtn);
 
-    private void recylcerViewPopular(){
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,CartListActivity.class));
+            }
+        });
+
+        homeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,MainActivity.class));
+            }
+        });
+    }
+
+    private void recyclerViewPopular(){
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         recyclerViewPopularList = findViewById(R.id.popularRecyclerView);
         recyclerViewPopularList.setLayoutManager(linearLayoutManager);

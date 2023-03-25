@@ -1,11 +1,17 @@
 package com.example.finalyearproject.Domain;
 
-public class ProductDomain {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public class ProductDomain implements Serializable {
 
     private String title;
     private String pic;
     private String description;
     private double fee;
+    private int numberInCart;
 
     public ProductDomain(String title, String pic, String description, double fee) {
         this.title = title;
@@ -13,6 +19,22 @@ public class ProductDomain {
         this.description = description;
         this.fee = fee;
     }
+    public ProductDomain(String title, String pic, String description, double fee,int numberInCart) {
+        this.title = title;
+        this.pic = pic;
+        this.description = description;
+        this.fee = fee;
+        this.numberInCart = numberInCart;
+    }
+
+    protected ProductDomain(Parcel in) {
+        title = in.readString();
+        pic = in.readString();
+        description = in.readString();
+        fee = in.readDouble();
+    }
+
+
 
     public String getTitle() {
         return title;
@@ -44,5 +66,15 @@ public class ProductDomain {
 
     public void setFee(double fee) {
         this.fee = fee;
+    }
+
+
+
+    public int getNumberInCart() {
+        return numberInCart;
+    }
+
+    public void setNumberInCart(int numberInCart) {
+        this.numberInCart = numberInCart;
     }
 }
