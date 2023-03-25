@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.example.finalyearproject.Domain.ProductDomain;
+import com.example.finalyearproject.Domain.ProductDomain;
 import com.example.finalyearproject.Interface.ChangeNumberItemsListener;
 import com.example.finalyearproject.Product;
 import com.google.android.gms.tasks.OnFailureListener;
