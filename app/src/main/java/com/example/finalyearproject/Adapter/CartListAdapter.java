@@ -54,26 +54,30 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewHo
      holder.plusItem.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View view) {
-            managementCart.plusNumberFood(productDomains, position, new ChangeNumberItemsListener() {
-                @Override
-                public void changed() {
-                    notifyDataSetChanged();
-                    changeNumberItemsListener.changed();
-                }
-            });
+
+                 managementCart.plusNumberFood(productDomains, position, new ChangeNumberItemsListener() {
+                     @Override
+                     public void changed()  {
+                         notifyDataSetChanged();
+                         changeNumberItemsListener.changed();
+                     }
+                 });
+
          }
      });
 
      holder.minusItem.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View view) {
-             managementCart.minusNumberFood(productDomains, position, new ChangeNumberItemsListener() {
-                 @Override
-                 public void changed() {
-                     notifyDataSetChanged();
-                     changeNumberItemsListener.changed();
-                 }
-             });
+
+                 managementCart.minusNumberFood(productDomains, position, new ChangeNumberItemsListener() {
+                     @Override
+                     public void changed() {
+                         notifyDataSetChanged();
+                         changeNumberItemsListener.changed();
+                     }
+                 });
+
          }
      });
     }

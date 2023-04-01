@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public class ProductDomain implements Serializable {
 
@@ -13,13 +14,54 @@ public class ProductDomain implements Serializable {
     private double fee;
     private int numberInCart;
 
-    public ProductDomain(String title, String pic, String description, double fee) {
+    private String sellerAddress;
+
+    private String uniqueId ;
+
+    private boolean status;
+
+    private String userId;
+
+    public ProductDomain() {
+
+    }
+
+    public ProductDomain(String title, String pic, String description, double fee,String sellerAddress,boolean status,String userId) {
         this.title = title;
         this.pic = pic;
         this.description = description;
         this.fee = fee;
+        this.sellerAddress = sellerAddress;
+        this.status = status;
+        this.userId = userId;
+        this.uniqueId = UUID.randomUUID().toString();
     }
-    public ProductDomain(String title, String pic, String description, double fee,int numberInCart) {
+
+    public ProductDomain(String title, String pic, String description, double fee, int numberInCart, String sellerAddress, boolean status, String userId) {
+        this.title = title;
+        this.pic = pic;
+        this.description = description;
+        this.fee = fee;
+        this.numberInCart = numberInCart;
+        this.sellerAddress = sellerAddress;
+        this.uniqueId =  UUID.randomUUID().toString();
+        this.status = status;
+        this.userId = userId;
+    }
+
+    public ProductDomain(String title, String pic, String description, double fee, int numberInCart,String uniqueId, String sellerAddress, boolean status, String userId) {
+        this.title = title;
+        this.pic = pic;
+        this.description = description;
+        this.fee = fee;
+        this.numberInCart = numberInCart;
+        this.sellerAddress = sellerAddress;
+        this.uniqueId =  uniqueId;
+        this.status = status;
+        this.userId = userId;
+    }
+
+    public ProductDomain(String title, String pic, String description, double fee, int numberInCart) {
         this.title = title;
         this.pic = pic;
         this.description = description;
@@ -27,14 +69,14 @@ public class ProductDomain implements Serializable {
         this.numberInCart = numberInCart;
     }
 
-    protected ProductDomain(Parcel in) {
-        title = in.readString();
-        pic = in.readString();
-        description = in.readString();
-        fee = in.readDouble();
+
+    public String getUserId() {
+        return userId;
     }
 
-
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getTitle() {
         return title;
@@ -76,5 +118,29 @@ public class ProductDomain implements Serializable {
 
     public void setNumberInCart(int numberInCart) {
         this.numberInCart = numberInCart;
+    }
+
+    public String getSellerAddress() {
+        return sellerAddress;
+    }
+
+    public void setSellerAddress(String sellerAddress) {
+        this.sellerAddress = sellerAddress;
+    }
+
+    public String getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

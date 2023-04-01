@@ -64,7 +64,11 @@ private ManagementCart managementCart;
             @Override
             public void onClick(View view) {
                 object.setNumberInCart(numberOrder);
-                managementCart.insertProduct(object);
+                try {
+                    managementCart.insertProduct(object);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 Log.d("CREATION","ADD TO CART BUTTON CLICKED ");
 
             }
