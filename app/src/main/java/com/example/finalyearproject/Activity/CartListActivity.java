@@ -2,6 +2,9 @@ package com.example.finalyearproject.Activity;
 
 import static android.content.ContentValues.TAG;
 
+import static org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT;
+import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -10,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.hardware.SensorDirectChannel;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,11 +23,17 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.finalyearproject.Adapter.CartListAdapter;
+import com.example.finalyearproject.BankFactory;
 import com.example.finalyearproject.Domain.ProductDomain;
 import com.example.finalyearproject.Helper.ManagementCart;
 import com.example.finalyearproject.Interface.ChangeNumberItemsListener;
 import com.example.finalyearproject.Interface.OnDataReceiveCallback;
 import com.example.finalyearproject.R;
+import com.example.finalyearproject.Transaction;
+import com.example.finalyearproject.User;
+import com.example.finalyearproject.paymentActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,7 +43,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.web3j.abi.datatypes.Int;
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.RawTransactionManager;
+import org.web3j.tx.TransactionManager;
+import org.web3j.tx.gas.ContractGasProvider;
+import org.web3j.tx.gas.StaticGasProvider;
+import org.web3j.utils.Convert;
+
 import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -50,16 +72,23 @@ public class CartListActivity extends AppCompatActivity {
 private RecyclerView.Adapter adapter;
 private RecyclerView recyclerViewList;
 private ManagementCart managementCart;
-TextView totalFeetxt, taxTxt,deliveryTxt,totalTxt, emptyTxt;
+TextView totalFeetxt, taxTxt,deliveryTxt,totalTxt, emptyTxt, checkoutBtn;
 private double tax;
 private ScrollView scrollView;
     ArrayList<ProductDomain> result;
 
     ExecutorService es;
-    DatabaseReference fireDB;
+    DatabaseReference fireDB,productDB;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private String userID;
+    Credentials credentials;
+    String credentialsString;
+    Web3j web3;
+    String bigint, receiverAddress, senderAddress;
+    BigInteger gasPrice, gasLimit;
+    BigDecimal bigDecimal;
+
     ArrayList<ProductDomain> cart;
     ExecutorService taskExecutor;
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -74,7 +103,12 @@ private ScrollView scrollView;
 
         cart = new ArrayList<>();
         fireDB = FirebaseDatabase.getInstance().getReference("cart");
-        ExecutorService es = Executors.newSingleThreadExecutor();
+        productDB= FirebaseDatabase.getInstance().getReference("Products");
+
+
+
+        //temporary for testing
+
 
         //managementCart = new ManagementCart(this);
          result = null;
@@ -108,6 +142,8 @@ private ScrollView scrollView;
         });
     }
     private void initView() {
+        es = Executors.newCachedThreadPool();
+
         recyclerViewList = findViewById(R.id.recyclerView);
         totalFeetxt = findViewById(R.id.totalFeeTv);
         taxTxt = findViewById(R.id.taxTxt);
@@ -116,7 +152,122 @@ private ScrollView scrollView;
         emptyTxt = findViewById(R.id.emptyTxt);
         scrollView = findViewById(R.id.scrollView3);
         recyclerViewList = findViewById(R.id.cartView);
+        checkoutBtn = findViewById(R.id.CheckoutBTN);
 
+
+
+                checkoutBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        createTransaction();
+
+                    }
+                });
+
+
+    }
+
+    public void createTransaction(){
+
+
+                DatabaseReference userdatabase;
+                userdatabase = FirebaseDatabase.getInstance().getReference("Users");
+                //Make new transaction
+                Transaction transaction = new Transaction();
+
+                //Get user details necessary for transaction
+                //Sets transaction amount, address to pay the amount to, sets status to false because money will go into escrow.
+                for(int i =0; i < cart.size(); i++){
+                    transaction.setAmount(cart.get(i).getFee());
+                    transaction.setReceiverAddress(cart.get(i).getSellerAddress());
+                    transaction.setStatus(false);
+                    transaction.setProduct(cart.get(i));
+
+                }
+
+                //Sets User to current user
+                //sets transaction sender address to the users eth address.
+                userdatabase.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        if(snapshot.getKey().equalsIgnoreCase(userID)){
+                            User user = snapshot.getValue(User.class);
+
+                            transaction.setSenderAddress(user.getEthAddress());
+
+
+
+                            //make new bank
+
+                            try {
+
+                                 insertTransaction(transaction,user);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    }
+
+
+
+
+
+
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d("CREATION", "cancelled transaction child listener");
+
+                    }
+                });
+
+
+
+
+    }
+
+    public void insertTransaction(Transaction transaction,User user){
+        DatabaseReference transactionDB;
+        transactionDB = FirebaseDatabase.getInstance().getReference();
+        transactionDB.child("Transaction").child(userID).child(transaction.getUniqueId()).setValue(transaction).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.d("Transaction","Transaction added to database");
+                Intent intent = new Intent(CartListActivity.this, paymentActivity.class);
+                intent.putExtra("transaction",transaction);
+                intent.putExtra("user",user);
+
+                startActivity(intent);
+
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Transaction","Transaction failed to add to database");
+
+            }
+        });
     }
 
     private void initList() throws InterruptedException {
@@ -128,9 +279,10 @@ private ScrollView scrollView;
 
         getFromFirebase(new OnDataReceiveCallback(){
             @Override
-            public void onDataReceived(ArrayList<ProductDomain> list) {
+            public void onDataReceived(ArrayList list) {
                 Log.d("CREATION", "received data ");
 
+                cart = list;
                 adapter = new CartListAdapter(list, CartListActivity.this, new ChangeNumberItemsListener() {
                     @Override
                     public void changed() {
@@ -152,6 +304,11 @@ private ScrollView scrollView;
                     emptyTxt.setVisibility(View.GONE);
                     scrollView.setVisibility(View.VISIBLE);
                 }
+            }
+
+            @Override
+            public void onDataReceived(int n) {
+
             }
 
         });

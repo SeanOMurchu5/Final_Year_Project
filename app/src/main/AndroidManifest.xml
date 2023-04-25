@@ -15,9 +15,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FinalYearProject"
-        tools:targetApi="31"
         android:usesCleartextTraffic="true"
-        >
+        tools:targetApi="31">
+        <activity
+            android:name=".Activity.ActiveTransactionDetail"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.activeTransactions"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ProfileDetails"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.TransactionDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.transactionHistory"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.TransactionPageActivity"
+            android:exported="false" />
         <activity
             android:name=".Activity.showDetailActivity"
             android:exported="false">

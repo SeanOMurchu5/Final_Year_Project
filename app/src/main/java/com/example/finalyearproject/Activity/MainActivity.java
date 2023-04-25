@@ -33,6 +33,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private String userID;
+    ArrayList<ProductDomain> productList;
+
 
     ImageView homeBtn,addProductBtn;
     @Override
@@ -87,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
     private void bottomNavigation(){
         FloatingActionButton floatingActionButton = findViewById(R.id.cartBtn);
         LinearLayout homeBtn = findViewById(R.id.homeBtn);
+        LinearLayout addBtn = findViewById(R.id.addBtn);
+        LinearLayout profileBtn = findViewById(R.id.profileBtn);
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +107,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this,MainActivity.class));
             }
         });
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,addProduct.class));
+
+            }
+        });
+
+        profileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this,ProfileActivity.class));
+
+            }
+        });
+
     }
 
     private void recyclerViewPopular(){
@@ -109,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewPopularList.setLayoutManager(linearLayoutManager);
 
         ArrayList<ProductDomain> popularList = new ArrayList<>();
-        popularList.add(new ProductDomain("Jordan 1","jordan1","The Jordan 1 a timeless classic",160,"selleraddress",false,userID));
+        popularList.add(new ProductDomain("Jordan 1","jordan1","The Jordan 1 a timeless classic",160,"0x86F0dA0BBB441902eB16f1f7B8021eAA0f2E2740",false,userID));
         popularList.add(new ProductDomain("Nike Airforce 1","airforce1","The Airforce 1 the complete shoe",90,"selleraddress",false,userID));
         popularList.add(new ProductDomain("Adidas Superstars","superstar","The Adidas Superstars an anytime shoe",120,"selleraddress",false,userID));
         popularList.add(new ProductDomain("Yeezy Boost 350 V2","yeezy350v2","The Yeezy Boost 350 V2 a gamechanger",300,"selleraddress",false,userID));
@@ -117,4 +139,6 @@ public class MainActivity extends AppCompatActivity {
          adapter2 = new PopularAdapter(popularList);
          recyclerViewPopularList.setAdapter(adapter2);
     }
+
+
 }

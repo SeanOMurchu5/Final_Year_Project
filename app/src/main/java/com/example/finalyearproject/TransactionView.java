@@ -28,6 +28,6 @@ Transaction transaction;
         tvTransactionBuyer.setText(amount);
 
         TextView tvTransactionStatus = findViewById(R.id.transactionStatus);
-        tvTransactionBuyer.setText(transaction.getStatus());
+
     }
 }

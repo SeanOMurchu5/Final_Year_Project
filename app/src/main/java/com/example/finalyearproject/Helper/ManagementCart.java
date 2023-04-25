@@ -152,7 +152,10 @@ public class ManagementCart{
 
     public void plusNumberFood(ArrayList<ProductDomain> list, int position, ChangeNumberItemsListener changeNumberItemsListener)  {
        list.get(position).setNumberInCart(list.get(position).getNumberInCart() + 1);
-       fireDB.setValue(list);
+       for(int i =0; i < list.size();i++){
+
+           fireDB.child(userID).child(list.get(i).getUniqueId()).setValue(list.get(i));
+       }
        changeNumberItemsListener.changed();
     }
 
@@ -162,8 +165,11 @@ public class ManagementCart{
       }else{
           list.get(position).setNumberInCart(list.get(position).getNumberInCart()-1);
       }
-      fireDB.setValue(list);
-      changeNumberItemsListener.changed();
+        for(int i =0; i < list.size();i++){
+
+            fireDB.child(userID).child(list.get(i).getUniqueId()).setValue(list.get(i));
+        }
+        changeNumberItemsListener.changed();
     }
 
     public Double getTotalFee() {

@@ -1,5 +1,6 @@
 package com.example.finalyearproject;
 
+import static android.content.ContentValues.TAG;
 import static org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT;
 import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 
@@ -42,11 +43,13 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.Ethereum;
 import org.web3j.protocol.core.RemoteCall;
+import org.web3j.protocol.core.RemoteFunctionCall;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthGasPrice;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import org.web3j.protocol.core.methods.response.EthTransaction;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.exceptions.TransactionException;
@@ -73,6 +76,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -92,6 +96,9 @@ public class paymentActivity extends AppCompatActivity {
     String answer;
     String a;
     String bigint;
+    User user;
+    Transaction transaction;
+    String uniqueId;
 
 
     public paymentActivity() throws ExecutionException, InterruptedException {
@@ -102,28 +109,29 @@ public class paymentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
         Intent intent = getIntent();
-        String key = intent.getStringExtra("key");
+        getBundle();
        // credentials = Credentials.create(key);
-        credentials = Credentials.create("0a95592342d8f17f8b712d937d2e9fe356b75b46062ed4552a7e89059d0c669d");
-        String uniqueId = UUID.randomUUID().toString();
+        credentials = Credentials.create(user.getCredentials());
+         uniqueId = transaction.getUniqueId();
 
-        String receiverAddress = intent.getStringExtra("receiver");
-        String senderAddress = intent.getStringExtra("address");
-        double amount = intent.getDoubleExtra("amount",0);
-        web3 = Web3j.build(new HttpService("HTTP://192.168.0.127:7545"));
+        String receiverAddress = transaction.getReceiverAddress();
+        String senderAddress = transaction.getSenderAddress();
+        double amount = transaction.getAmount();
+        web3 = Web3j.build(new HttpService("HTTP://192.168.0.51:7545"));
         //change server address and portnumber
 
         BigInteger gasPrice = GAS_PRICE; // replace with the actual gas price you want to use
-        BigInteger gasLimit = GAS_LIMIT;
+        BigInteger customGasLimit = BigInteger.valueOf(6721975); // Adjust this value based on your requirements
         BigDecimal b = Convert.toWei(String.valueOf(amount), Convert.Unit.ETHER);
-        final ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, gasLimit);
+        BigInteger value = Convert.toWei(String.valueOf(amount), Convert.Unit.ETHER).toBigInteger();
+
+        final ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, customGasLimit);
         TransactionManager manager = new RawTransactionManager(web3, credentials, 200, 500);
-        final BankFactory bfContract = BankFactory.load("0xd78f053BB2c8cAca51844398b01F769b46212322", web3, manager, gasProvider);
+        final BankFactory bfContract = BankFactory.load("0x6a4392607d1B6C5A549C52963130f29356523E0e", web3, manager, gasProvider);
         ExecutorService es = Executors.newCachedThreadPool();
         //temporary for testing
-        senderAddress="0xDFCd1eb65f15f5Fb248579b8251f1A9A33E86f30";
-        receiverAddress="0xF945257bb938214e9e15122Fd3C9D56579896705";
         String status = "Funds released";
+        String contractAddress = "0x65aaF951A6EbA97Bc1059430af919169716d58d2";
 
 
         es.execute(new Runnable() {
@@ -137,11 +145,11 @@ public class paymentActivity extends AppCompatActivity {
                 try {
                     String getFunds;
 
-//                    String a = String.valueOf(bfContract.createBank(senderAddress,receiverAddress,uniqueId, b.toBigInteger()).send());
-//                    getFunds = String.valueOf(bfContract.getBankDetails(uniqueId).send());
-//                     bigint = String.valueOf(bfContract.getBank().send());
-                    String a = String.valueOf(bfContract.createBank("0xDFCd1eb65f15f5Fb248579b8251f1A9A33E86f30","0xF945257bb938214e9e15122Fd3C9D56579896705",uniqueId, b.toBigInteger()).send());
+
+                   String a = String.valueOf(bfContract.createBank(senderAddress,receiverAddress,uniqueId,value).send());
                     bigint = String.valueOf(bfContract.getBankDetails(uniqueId).send());
+                    Log.v(TAG,"successfully created transaction");
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -156,61 +164,58 @@ public class paymentActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        DatabaseReference firebaseUsers = FirebaseDatabase.getInstance().getReference();
-
-        Transaction transaction = new Transaction(senderAddress,receiverAddress,amount,uniqueId,status);
-
-        firebaseUsers.child("Products").child(uniqueId).setValue(transaction).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Log.d("MESSAGE", "Success at database transaction creation");
-                Toast.makeText(getApplicationContext(), "Created new transaction", Toast.LENGTH_LONG).show();
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("MESSAGE", "Failed at database transaction creation");
-            }
-        });
 
 
+
+
+
+        TextView transactionId = findViewById(R.id.transactionIdTV);
+        transactionId.setText(transaction.getUniqueId());
         TextView ethgptv = findViewById(R.id.GaspriceTVdisplay);
 //     //   ethgptv.setText(gasPrice.getGasPrice().toString());
         ethgptv.setText(bigint);
 
-        Button releaseBTN = findViewById(R.id.releaseBTN);
-        releaseBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ExecutorService es = Executors.newCachedThreadPool();
-                es.execute(new Runnable() {
+//        Button releaseBTN = findViewById(R.id.releaseBTN);
+//        releaseBTN.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ExecutorService es = Executors.newCachedThreadPool();
+//                es.execute(new Runnable() {
+//
+//
+//
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            String bankAddress = bfContract.getBankAddress(uniqueId).send();
+//                            Bank bankContract = Bank.load(bankAddress, web3, credentials, gasPrice, customGasLimit);
+//                            TransactionReceipt receipt = bankContract.sendFunds().send();
+//
+//                            //String releasefunds = String.valueOf(bfContract.sendFunds(uniqueId).send());
+//                            Toast.makeText(getApplicationContext(),"Ether Funds released from Escrow",Toast.LENGTH_SHORT).show();   // <-- throws exception
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            //Toast.makeText(getApplicationContext(),"Ether Funds not released from Escrow",Toast.LENGTH_SHORT).show();   // <-- throws exception
+//
+//                        }
+//                    }
+//
+//
+//        });
+//        }
+//
+//
+//        });
+    }
+
+    private void getBundle() {
+         transaction = (Transaction) getIntent().getSerializableExtra("transaction");
+         user = (User) getIntent().getSerializableExtra("user");
 
 
 
-                    @Override
-                    public void run() {
-                        try {
-                            String bankAddress = bfContract.getBankAddress(uniqueId).send();
-                            Bank bankContract = Bank.load(bankAddress, web3, credentials, gasPrice, gasLimit);
-                            TransactionReceipt receipt = bankContract.sendFunds().send();
-
-                            //String releasefunds = String.valueOf(bfContract.sendFunds(uniqueId).send());
-                            Toast.makeText(getApplicationContext(),"Ether Funds released from Escrow",Toast.LENGTH_SHORT).show();   // <-- throws exception
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            //Toast.makeText(getApplicationContext(),"Ether Funds not released from Escrow",Toast.LENGTH_SHORT).show();   // <-- throws exception
-
-                        }
-                    }
 
 
-        });
-        }
-
-
-        });
     }
 
     }
