@@ -1,25 +1,53 @@
 package com.example.finalyearproject;
 
+import com.example.finalyearproject.Domain.ProductDomain;
+
 import java.io.Serializable;
+import java.util.UUID;
 
 public class Transaction implements Serializable {
 
     public String senderAddress;
     public String receiverAddress;
     public Double amount;
+    public ProductDomain product;
     public String uniqueId;
-    public String status;
+    public boolean status;
 
     public Transaction(){
+        uniqueId = UUID.randomUUID().toString();;
 
     }
 
-    public Transaction(String sa, String ra, double a, String uID,String stat){
+    public Transaction(String sa, String ra, double a, String uID,boolean stat){
         senderAddress  = sa;
         receiverAddress = ra;
         amount = a;
         uniqueId = uID;
         status = stat;
+    }
+    public Transaction(String sa, String ra, double a,boolean stat){
+        senderAddress  = sa;
+        receiverAddress = ra;
+        amount = a;
+        uniqueId = UUID.randomUUID().toString();;
+        status = stat;
+    }
+
+    public ProductDomain getProduct() {
+        return product;
+    }
+
+    public void setProduct(ProductDomain product) {
+        this.product = product;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public String getSenderAddress() {
@@ -54,11 +82,5 @@ public class Transaction implements Serializable {
         this.uniqueId = uniqueId;
     }
 
-    public String getStatus() {
-        return status;
-    }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

@@ -1,19 +1,25 @@
 package com.example.finalyearproject;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     String name;
     String email;
     String address;
     String ethAddress;
     String uniqueId;
+    String credentials;
 
-    public User(String n,String e,String address,String ethAddress,String uniqueId){
+    boolean admin;
+
+    public User(String n,String e,String address,String ethAddress,String uniqueId,String credentials){
         this.name = n;
         this.email = e;
         this.address = address;
         this.ethAddress = ethAddress;
         this.uniqueId = uniqueId;
+        this.credentials = credentials;
     }
 
     public User(){
@@ -22,6 +28,22 @@ public class User {
         this.address = null;
         this.ethAddress = null;
         this.uniqueId = null;
+    }
+
+    public String getCredentials() {
+        return credentials;
+    }
+
+    public void setCredentials(String credentials) {
+        this.credentials = credentials;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
     public String getUniqueId() {

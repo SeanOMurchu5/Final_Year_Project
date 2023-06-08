@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.finalyearproject.Activity.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,6 +32,7 @@ public class SignUpActivity extends AppCompatActivity {
     String name;
     String address;
     String ethAddress;
+    String credentials;
     String dob;
     String password;
     String password2;
@@ -48,6 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
         EditText passwordET2 = findViewById(R.id.enterPasswordET2);
         EditText addressET = findViewById(R.id.ETAddress);
         EditText ethAdressET = findViewById(R.id.ETaddressETH);
+        EditText credentialsET = findViewById(R.id.credentialsET);
 
         DatabaseReference firebaseUsers = FirebaseDatabase.getInstance().getReference();
 
@@ -60,6 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
                 password2 = passwordET2.getText().toString();
                 address = addressET.getText().toString();
                 ethAddress = ethAdressET.getText().toString();
+                credentials = credentialsET.getText().toString();
 
 
                 if(password.equals(password2)){
@@ -72,7 +76,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         Log.d("MESSAGE","email is "+email);
                                         Log.d("MESSAGE","password is "+password);
                                         String userID= mUser.getUid();
-                                        User user = new User(name,email,address,ethAddress,userID);
+                                        User user = new User(name,email,address,ethAddress,userID,credentials);
 
                                         firebaseUsers.child("Users").child(userID).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
@@ -87,7 +91,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 Log.d("MESSAGE","Failed at database user creation");
                                             }
                                         });
-                                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                         startActivity(intent);
 
                                     }else {

@@ -1,6 +1,7 @@
 package com.example.finalyearproject;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -11,11 +12,14 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.finalyearproject.Domain.ProductDomain;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,12 +28,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,53 +46,71 @@ import java.util.UUID;
 public class addProduct extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
-    String productName, productPrice, productDescription, sellerAddress;
-    BottomNavigationView bottomNavigationView;
+    String productName, productPrice, productDescription, sellerAddress,categoryText;
     private ImageView imageView;
     private Uri filePath;
     private final int PICK_IMAGE_REQUEST = 71;
-    FirebaseStorage storage;
-    StorageReference storageReference;
+    String userId;
+    StorageReference ref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
         mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        userId = mUser.getUid();
         EditText productNameET = findViewById(R.id.ETproductName);
         EditText productPriceET = findViewById(R.id.ETproductPrice);
         EditText productDescriptionET = findViewById(R.id.ETproductDescription);
-        EditText sellerAddressET = findViewById(R.id.ETsellerWallet);
-        bottomNavigationView = findViewById(R.id.bottonnav);
-        bottomNavigationView.setOnItemSelectedListener(item ->{
-            switch (item.getItemId()) {
-                case R.id.Home:
-                    Intent intent = new Intent(addProduct.this, HomeActivity.class);
-                    startActivity(intent);
-                    break;
-                case R.id.Search:
-                    intent = new Intent(addProduct.this, HomeActivity.class);
-                    startActivity(intent);
-                    break;
-                case R.id.Sell:
-                    intent = new Intent(addProduct.this, addProduct.class);
-                    startActivity(intent);
-                    break;
-                case R.id.Account:
-                    intent = new Intent(addProduct.this, AccountActivity.class);
-                    startActivity(intent);
-                    break;
-                case R.id.Payment:
-                    intent = new Intent(addProduct.this, PaymentTaker.class);
-                    startActivity(intent);
-                    break;
+        Spinner category = findViewById(R.id.spinner);
+        category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                categoryText = adapterView.getItemAtPosition(i).toString();
             }
-            return true;
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        DatabaseReference usersDb = FirebaseDatabase.getInstance().getReference("Users");
+        usersDb.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+              User user = snapshot.getValue(User.class);
+              if(user.getUniqueId().equalsIgnoreCase(userId)){
+                   sellerAddress = user.getEthAddress();
+              }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
         });
 
         Button chooseImageBTN = findViewById(R.id.chooseImageBTN);
         imageView = (ImageView) findViewById(R.id.imageView);
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+//        storage = FirebaseStorage.getInstance();
+//        storageReference = storage.getReference();
         chooseImageBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,19 +128,19 @@ public class addProduct extends AppCompatActivity {
                 productPrice = productPriceET.getText().toString();
                 double pp = Double.valueOf(productPrice);
                 productDescription = productDescriptionET.getText().toString();
-                sellerAddress = sellerAddressET.getText().toString();
                 DatabaseReference firebaseUsers = FirebaseDatabase.getInstance().getReference();
                 String uniqueId = UUID.randomUUID().toString();
-
-
-                Product prod = new Product(productName,pp,productDescription,sellerAddress,false,uniqueId);
-                uploadImage(uniqueId);
+               //pic is null as of now
+                String pic=uniqueId;
+                ProductDomain prod = new ProductDomain(productName,null,productDescription,pp,0,uniqueId,sellerAddress,false,"",categoryText,userId);
+                //uploadImage(uniqueId);
 
                 firebaseUsers.child("Products").child(uniqueId).setValue(prod).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
                         Log.d("MESSAGE", "Success at database product creation");
                         Toast.makeText(getApplicationContext(), "Created new product", Toast.LENGTH_LONG).show();
+                        uploadImage(uniqueId);
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -152,13 +178,14 @@ public class addProduct extends AppCompatActivity {
         }
     }
 
-    private void uploadImage(String uniqueID) {
+  private void uploadImage(String uniqueID) {
         if(filePath != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
-            StorageReference ref = storageReference.child("images/"+ uniqueID);
+
+            ref = FirebaseStorage.getInstance().getReference("images/"+ uniqueID+".jpg");
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
