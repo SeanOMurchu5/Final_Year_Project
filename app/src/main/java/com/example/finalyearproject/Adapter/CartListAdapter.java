@@ -2,6 +2,7 @@ package com.example.finalyearproject.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,12 @@ import com.example.finalyearproject.Domain.ProductDomain;
 import com.example.finalyearproject.Helper.ManagementCart;
 import com.example.finalyearproject.Interface.ChangeNumberItemsListener;
 import com.example.finalyearproject.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -26,11 +33,22 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewHo
    private ArrayList<ProductDomain> productDomains;
    private ManagementCart managementCart;
    private ChangeNumberItemsListener changeNumberItemsListener;
+   DatabaseReference fireDB;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
+    private String userID;
+
 
     public CartListAdapter(ArrayList<ProductDomain> productDomains, Context context, ChangeNumberItemsListener changeNumberItemsListener) {
         this.productDomains = productDomains;
         this.managementCart = new ManagementCart(context);
         this.changeNumberItemsListener = changeNumberItemsListener;
+        fireDB = FirebaseDatabase.getInstance().getReference("cart");
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        assert mUser != null;
+        userID = mUser.getUid();
+
     }
 
     @Override
@@ -42,29 +60,16 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull CartListAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
      holder.title.setText(productDomains.get(position).getTitle());
-     holder.feeEachItem.setText(String.valueOf(productDomains.get(position).getFee()));
      holder.totalEachItem.setText(String.valueOf(Math.round((productDomains.get(position).getNumberInCart() * productDomains.get(position).getFee())*100) / 100));
      holder.num.setText(String.valueOf(productDomains.get(position).getNumberInCart()));
+        StorageReference ref = FirebaseStorage.getInstance().getReference("images/"+productDomains.get(position).getUniqueId()+".jpg");
 
-     int drawableResourceId=holder.itemView.getContext().getResources().getIdentifier(productDomains.get(position).getPic(),"drawable",holder.itemView.getContext().getPackageName());
+        //int drawableResourceId = this.getResources().getIdentifier(object.getPic(),"drawable",this.getPackageName());
         Glide.with(holder.itemView.getContext())
-                .load(drawableResourceId)
+                .load(ref)
                 .into(holder.pic);
 
-     holder.plusItem.setOnClickListener(new View.OnClickListener() {
-         @Override
-         public void onClick(View view) {
 
-                 managementCart.plusNumberFood(productDomains, position, new ChangeNumberItemsListener() {
-                     @Override
-                     public void changed()  {
-                         notifyDataSetChanged();
-                         changeNumberItemsListener.changed();
-                     }
-                 });
-
-         }
-     });
 
      holder.minusItem.setOnClickListener(new View.OnClickListener() {
          @Override
@@ -74,7 +79,9 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewHo
                      @Override
                      public void changed() {
                          notifyDataSetChanged();
+
                          changeNumberItemsListener.changed();
+
                      }
                  });
 
@@ -89,16 +96,14 @@ public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         TextView title, feeEachItem;
-        ImageView pic, plusItem, minusItem;
+        ImageView pic, minusItem;
         TextView totalEachItem, num;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.titleTxt);
-            feeEachItem = itemView.findViewById(R.id.feeEachItem);
             pic=itemView.findViewById(R.id.picCart);
             totalEachItem=itemView.findViewById(R.id.totalEachItem);
             num=itemView.findViewById(R.id.numberItemTxt);
-            plusItem=itemView.findViewById(R.id.plusCartBtn);
             minusItem=itemView.findViewById(R.id.minusCartBtn);
         }
     }

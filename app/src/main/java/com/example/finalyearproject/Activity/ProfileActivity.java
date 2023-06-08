@@ -7,10 +7,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.finalyearproject.LoginActivity;
 import com.example.finalyearproject.R;
+import com.example.finalyearproject.SignUpActivity;
 import com.example.finalyearproject.User;
+import com.example.finalyearproject.addProduct;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -19,8 +24,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.web3j.abi.datatypes.Int;
+
 public class ProfileActivity extends AppCompatActivity {
-    TextView purchaseHistoryBtn, profileDetailsBtn, activeTransactions, AdminToolsBtn;
+    TextView purchaseHistoryBtn, profileDetailsBtn, activeTransactions, AdminToolsBtn, LogOutBtn,MyItems;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private String userID;
@@ -34,13 +41,21 @@ public class ProfileActivity extends AppCompatActivity {
         assert mUser != null;
         userID = mUser.getUid();
         fireDB = FirebaseDatabase.getInstance().getReference("users");
-
+        MyItems = findViewById(R.id.myItems);
         purchaseHistoryBtn = findViewById(R.id.purchaseHistoryBtn);
-        profileDetailsBtn = findViewById(R.id.profileDetailsBtn);
         activeTransactions = findViewById(R.id.activeTransactions);
         AdminToolsBtn = findViewById(R.id.adminBtn);
+        LogOutBtn = findViewById(R.id.logoutBTN);
 
+        bottomNavigation();
 
+        MyItems.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfileActivity.this,MyItemsActivity.class);
+                startActivity(intent);
+            }
+        });
         purchaseHistoryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,13 +64,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        profileDetailsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ProfileActivity.this,ProfileDetails.class);
-                startActivity(intent);
-            }
-        });
+
 
         activeTransactions.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +79,15 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                // Intent intent = new Intent(ProfileActivity.this,adminTools.class);
                // startActivity(intent);
+            }
+        });
+
+        LogOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signOut();
+                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -107,6 +125,42 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void bottomNavigation() {
+        FloatingActionButton floatingActionButton = findViewById(R.id.cartBtn);
+        LinearLayout homeBtn = findViewById(R.id.homeBtn);
+        LinearLayout addBtn = findViewById(R.id.addBtn);
+        LinearLayout profileBtn = findViewById(R.id.profileBtn);
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ProfileActivity.this, CartListActivity.class));
+            }
+        });
+
+        homeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+            }
+        });
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ProfileActivity.this, addProduct.class));
+
+            }
+        });
+
+        profileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ProfileActivity.this, ProfileActivity.class));
 
             }
         });

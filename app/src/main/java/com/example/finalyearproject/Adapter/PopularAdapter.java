@@ -2,6 +2,7 @@ package com.example.finalyearproject.Adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.example.finalyearproject.Activity.showDetailActivity;
 import com.example.finalyearproject.Domain.CategoryDomain;
 import com.example.finalyearproject.Domain.ProductDomain;
 import com.example.finalyearproject.R;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -40,10 +43,13 @@ public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.ViewHold
     public void onBindViewHolder(@NonNull PopularAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
     holder.title.setText(popularProducts.get(position).getTitle());
     holder.fee.setText(String.valueOf(popularProducts.get(position).getFee()));
+      //int drawableResourceId = holder.itemView.getContext().getResources().getIdentifier(popularProducts.get(position).getPic(),"drawable",holder.itemView.getContext().getPackageName());
+        StorageReference ref = FirebaseStorage.getInstance().getReference("images/"+popularProducts.get(position).getUniqueId()+".jpg");
 
-      int drawableResourceId = holder.itemView.getContext().getResources().getIdentifier(popularProducts.get(position).getPic(),"drawable",holder.itemView.getContext().getPackageName());
-
-        Glide.with(holder.itemView.getContext()).load(drawableResourceId).into(holder.pic);
+        //int drawableResourceId = this.getResources().getIdentifier(object.getPic(),"drawable",this.getPackageName());
+        Glide.with(holder.itemView.getContext())
+                .load(ref)
+                .into(holder.pic);
 
         holder.addBtn.setOnClickListener(new View.OnClickListener() {
             @Override

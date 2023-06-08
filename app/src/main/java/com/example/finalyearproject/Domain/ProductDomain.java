@@ -1,5 +1,6 @@
 package com.example.finalyearproject.Domain;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,6 +12,7 @@ public class ProductDomain implements Serializable {
     private String title;
     private String pic;
     private String description;
+    private String category;
     private double fee;
     private int numberInCart;
 
@@ -21,25 +23,26 @@ public class ProductDomain implements Serializable {
     private boolean status;
 
     private String userId;
+    String sellerId;
 
     public ProductDomain() {
 
     }
 
-    public ProductDomain(String title, String pic, String description, double fee,String sellerAddress,boolean status,String userId) {
+    public ProductDomain(String title, String pic, String description, double fee,String sellerAddress,boolean status,String userId,String category) {
         this.title = title;
-        this.pic = pic;
         this.description = description;
         this.fee = fee;
         this.sellerAddress = sellerAddress;
         this.status = status;
         this.userId = userId;
         this.uniqueId = UUID.randomUUID().toString();
+        this.category = category;
+
     }
 
-    public ProductDomain(String title, String pic, String description, double fee, int numberInCart, String sellerAddress, boolean status, String userId) {
+    public ProductDomain(String title, String pic, String description, double fee, int numberInCart, String sellerAddress, boolean status, String userId,String category) {
         this.title = title;
-        this.pic = pic;
         this.description = description;
         this.fee = fee;
         this.numberInCart = numberInCart;
@@ -47,11 +50,12 @@ public class ProductDomain implements Serializable {
         this.uniqueId =  UUID.randomUUID().toString();
         this.status = status;
         this.userId = userId;
+        this.category = category;
+
     }
 
-    public ProductDomain(String title, String pic, String description, double fee, int numberInCart,String uniqueId, String sellerAddress, boolean status, String userId) {
+    public ProductDomain(String title, String pic, String description, double fee, int numberInCart,String uniqueId, String sellerAddress, boolean status, String userId,String category,String sellerId) {
         this.title = title;
-        this.pic = pic;
         this.description = description;
         this.fee = fee;
         this.numberInCart = numberInCart;
@@ -59,16 +63,34 @@ public class ProductDomain implements Serializable {
         this.uniqueId =  uniqueId;
         this.status = status;
         this.userId = userId;
+        this.category = category;
+        this.sellerId = sellerId;
+
     }
 
-    public ProductDomain(String title, String pic, String description, double fee, int numberInCart) {
+    public ProductDomain(String title, String pic, String description, double fee, int numberInCart,String category) {
         this.title = title;
-        this.pic = pic;
         this.description = description;
         this.fee = fee;
         this.numberInCart = numberInCart;
+        this.category = category;
     }
 
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
     public String getUserId() {
         return userId;

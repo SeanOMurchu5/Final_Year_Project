@@ -39,7 +39,7 @@ public class transactionHistoryAdapter extends RecyclerView.Adapter<transactionH
     public void onBindViewHolder(@NonNull transactionHistoryAdapter.ViewHolder holder, int position) {
         Log.d("CREATION", "onbind purchasehistory");
 
-        holder.uniqueId.setText(String.valueOf(position));
+        holder.uniqueId.setText(transactions.get(position).getUniqueId());
         holder.status.setText("Status: "+transactions.get(position).isStatus());
         holder.totalCost.setText(String.valueOf(transactions.get(position).getAmount()));
         holder.mainLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(),R.drawable.cat_background1));

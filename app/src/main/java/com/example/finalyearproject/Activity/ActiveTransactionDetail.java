@@ -8,12 +8,16 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.finalyearproject.Adapter.ProductAdapter;
 import com.example.finalyearproject.Bank;
 import com.example.finalyearproject.BankFactory;
@@ -21,6 +25,9 @@ import com.example.finalyearproject.Domain.ProductDomain;
 import com.example.finalyearproject.R;
 import com.example.finalyearproject.Transaction;
 import com.example.finalyearproject.User;
+import com.example.finalyearproject.paymentActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -28,6 +35,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
@@ -47,7 +56,7 @@ import java.util.concurrent.Executors;
 public class ActiveTransactionDetail extends AppCompatActivity {
     RecyclerView recyclerView;
     ProductAdapter adapter;
-    TextView Cost,receiver, senderAddress,title,description,releaseFundsBtn;
+    TextView Cost,receiver, senderAddress,title,description,releaseFundsBtn,transactionId;
     ImageView pic;
     private ArrayList list;
     Transaction transaction;
@@ -62,6 +71,7 @@ public class ActiveTransactionDetail extends AppCompatActivity {
     private String userID;
     BigInteger customGasLimit;
     ContractGasProvider gasProvider;
+    boolean completed;
 
 
 
@@ -69,6 +79,7 @@ public class ActiveTransactionDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_transaction_detail);
+        completed = false;
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         assert mUser != null;
@@ -84,6 +95,7 @@ public class ActiveTransactionDetail extends AppCompatActivity {
         gasProvider = new StaticGasProvider(gasPrice, customGasLimit);
 // Adjust this value based on your requirements
         Cost = findViewById(R.id.totalTV);
+        transactionId =findViewById(R.id.transactionIDTextView);
         receiver = findViewById(R.id.receivertv);
         senderAddress = findViewById(R.id.senderAddresstv);
         title = findViewById(R.id.titletext);
@@ -146,8 +158,12 @@ public class ActiveTransactionDetail extends AppCompatActivity {
 
                 });
                 es.shutdown();
+                toast();
+
             }
+
         });
+
     }
 
     public void releaseFunds(){
@@ -156,17 +172,44 @@ public class ActiveTransactionDetail extends AppCompatActivity {
         TransactionManager manager = new RawTransactionManager(web3, credentials, 200, 500);
         String bankAddress = null;
         try {
-            final BankFactory bfContract = BankFactory.load("0x6a4392607d1B6C5A549C52963130f29356523E0e", web3, manager, gasProvider);
+            final BankFactory bfContract = BankFactory.load("0x7Fc7E366cBEAf00daafe771af27c21A097711284", web3, manager, gasProvider);
 
             bankAddress = bfContract.getBankAddress(transaction.getUniqueId()).send();
             Bank bankContract = Bank.load(bankAddress, web3, credentials, gasPrice, customGasLimit);
             TransactionReceipt receipt = bankContract.sendFunds().send();
+            completed = true;
 
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public void toast(){
+        if(completed){
+            Toast.makeText(this, "Funds released to seller", Toast.LENGTH_SHORT).show();
+            transaction.setStatus(true);
+            DatabaseReference transactionDB = FirebaseDatabase.getInstance().getReference();
+            transactionDB.child("Transaction").child(userID).child(transaction.getUniqueId()).setValue(transaction).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Log.d("Transaction","Transaction modified in  database");
+
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d("Transaction","Transaction failed to modify to database");
+
+                }
+            });
+
+        }else{
+            Toast.makeText(this, "Funds not released, error with releasing funds", Toast.LENGTH_SHORT).show();
+
+        }
     }
 
     private void getBundle() {
@@ -177,11 +220,15 @@ public class ActiveTransactionDetail extends AppCompatActivity {
         receiver.setText(String.valueOf(transaction.getReceiverAddress()));
         senderAddress.setText(transaction.getSenderAddress());
         ProductDomain productDomain = transaction.getProduct();
+        transactionId.setText(transaction.getUniqueId());
         title.setText(productDomain.getTitle());
         description.setText(productDomain.getDescription());
-        String picurl = productDomain.getPic();
-        int drawableResourceId = this.getResources().getIdentifier(picurl,"drawable",this.getPackageName());
-        pic.setImageResource(drawableResourceId);
+        StorageReference ref = FirebaseStorage.getInstance().getReference("images/"+transaction.getProduct().getUniqueId()+".jpg");
+
+        //int drawableResourceId = this.getResources().getIdentifier(object.getPic(),"drawable",this.getPackageName());
+        Glide.with(this)
+                .load(ref)
+                .into(pic);
 
 
 

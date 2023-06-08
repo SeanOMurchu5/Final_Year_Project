@@ -160,15 +160,11 @@ public class ManagementCart{
     }
 
     public void minusNumberFood(ArrayList<ProductDomain> list,int position,ChangeNumberItemsListener changeNumberItemsListener)  {
-      if(list.get(position).getNumberInCart()==1){
-        list.remove(position);
-      }else{
-          list.get(position).setNumberInCart(list.get(position).getNumberInCart()-1);
-      }
-        for(int i =0; i < list.size();i++){
+        fireDB.child(userID).child(list.get(position).getUniqueId()).removeValue();
 
-            fireDB.child(userID).child(list.get(i).getUniqueId()).setValue(list.get(i));
-        }
+        list.remove(position);
+
+
         changeNumberItemsListener.changed();
     }
 

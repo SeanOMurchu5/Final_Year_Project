@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="spinner_array">
+        <item>Shoes</item>
+        <item>Collectible</item>
+        <item>Apparel</item>
+        <item>Accessory</item>
+        <item>Electronics</item>
+
+    </string-array>
+</resources>

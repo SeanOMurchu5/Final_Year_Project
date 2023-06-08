@@ -31,6 +31,7 @@ import com.example.finalyearproject.Interface.OnDataReceiveCallback;
 import com.example.finalyearproject.R;
 import com.example.finalyearproject.Transaction;
 import com.example.finalyearproject.User;
+import com.example.finalyearproject.addProduct;
 import com.example.finalyearproject.paymentActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -72,7 +73,7 @@ public class CartListActivity extends AppCompatActivity {
 private RecyclerView.Adapter adapter;
 private RecyclerView recyclerViewList;
 private ManagementCart managementCart;
-TextView totalFeetxt, taxTxt,deliveryTxt,totalTxt, emptyTxt, checkoutBtn;
+TextView totalFeetxt, taxTxt,deliveryTxt,totalTxt, emptyTxt, checkoutBtn,totalTV;
 private double tax;
 private ScrollView scrollView;
     ArrayList<ProductDomain> result;
@@ -126,6 +127,9 @@ private ScrollView scrollView;
     private void bottomNavigation(){
         FloatingActionButton floatingActionButton = findViewById(R.id.cartBtn);
         LinearLayout homeBtn = findViewById(R.id.homeBtn);
+        LinearLayout addBtn = findViewById(R.id.addBtn);
+        LinearLayout editBtn = findViewById(R.id.editBtn);
+        LinearLayout profileBtn = findViewById(R.id.profileBtn);
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,14 +144,34 @@ private ScrollView scrollView;
                 startActivity(new Intent(CartListActivity.this,MainActivity.class));
             }
         });
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(CartListActivity.this, addProduct.class));
+
+            }
+        });
+        editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(CartListActivity.this,MainActivity.class));
+
+            }
+        });
+        profileBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(CartListActivity.this,ProfileActivity.class));
+
+            }
+        });
     }
     private void initView() {
         es = Executors.newCachedThreadPool();
-
+        totalTV = findViewById(R.id.totalTV);
         recyclerViewList = findViewById(R.id.recyclerView);
         totalFeetxt = findViewById(R.id.totalFeeTv);
-        taxTxt = findViewById(R.id.taxTxt);
-        deliveryTxt = findViewById(R.id.deliveryTxt);
+        deliveryTxt = findViewById(R.id.deliveryTV);
         totalTxt = findViewById(R.id.totalTxt);
         emptyTxt = findViewById(R.id.emptyTxt);
         scrollView = findViewById(R.id.scrollView3);
@@ -256,6 +280,7 @@ private ScrollView scrollView;
                 Intent intent = new Intent(CartListActivity.this, paymentActivity.class);
                 intent.putExtra("transaction",transaction);
                 intent.putExtra("user",user);
+                productDB.child(transaction.getProduct().getUniqueId()).removeValue();
 
                 startActivity(intent);
 
@@ -283,6 +308,8 @@ private ScrollView scrollView;
                 Log.d("CREATION", "received data ");
 
                 cart = list;
+                calculateCart();
+
                 adapter = new CartListAdapter(list, CartListActivity.this, new ChangeNumberItemsListener() {
                     @Override
                     public void changed() {
@@ -299,7 +326,7 @@ private ScrollView scrollView;
                     emptyTxt.setVisibility(View.VISIBLE);
                     scrollView.setVisibility(View.GONE);
                 }else{
-                    Log.d("CREATION","no empty ");
+                    Log.d("CREATION","not empty ");
 
                     emptyTxt.setVisibility(View.GONE);
                     scrollView.setVisibility(View.VISIBLE);
@@ -356,17 +383,19 @@ private ScrollView scrollView;
     }
 
     private void calculateCart(){
-        double percentTax = 0.02;
         double delivery=10;
 
-        tax= Math.round((getTotalFee(cart)*percentTax)*100)/100;
-        double total = Math.round((getTotalFee(cart) + tax + delivery) * 100)/100;
-        double itemTotal = Math.round(getTotalFee(cart)*100)/100;
 
+        double total = Math.round((getTotalFee(cart) + delivery) * 100)/100;
+        double itemTotal = Math.round(getTotalFee(cart)*100)/100;
+        Log.v(TAG, "in calc cart"+itemTotal );
+
+        if (itemTotal > 85) {
+            delivery = 0;
+        }
         totalFeetxt.setText("$"+itemTotal);
-        taxTxt.setText("$"+tax);
         deliveryTxt.setText("$"+delivery);
-        totalTxt.setText("$"+itemTotal);
+        totalTV.setText("$"+total);
     }
 
     public Double getTotalFee(ArrayList<ProductDomain> list) {
@@ -374,7 +403,7 @@ private ScrollView scrollView;
 
         double fee =0;
         for(int i = 0;i< list.size();i++){
-            fee = fee + (list.get(i).getFee() * list.get(i).getNumberInCart());
+            fee = fee + (list.get(i).getFee());
         }
 
         return fee;

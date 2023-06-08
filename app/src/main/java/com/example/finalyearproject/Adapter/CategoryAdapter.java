@@ -13,7 +13,10 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.finalyearproject.Activity.allAccessoryActivity;
 import com.example.finalyearproject.Activity.allApparelActivity;
+import com.example.finalyearproject.Activity.allCollectibleActivity;
+import com.example.finalyearproject.Activity.allElectronicsActivity;
 import com.example.finalyearproject.Activity.allShoesActivity;
 import com.example.finalyearproject.Domain.CategoryDomain;
 import com.example.finalyearproject.R;
@@ -52,11 +55,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
             holder.mainLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(),R.drawable.cat_background3));
             break;}
         case 3:{
-            picurl = "cat_4";
+            picurl = "cat5";
             holder.mainLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(),R.drawable.cat_background4));
             break; }
         case 4:{
-            picurl = "cat_5";
+            picurl = "cat_4";
             holder.mainLayout.setBackground(ContextCompat.getDrawable(holder.itemView.getContext(),R.drawable.cat_background5));
             break;}
 
@@ -99,16 +102,19 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                     view.getContext().startActivity(intent);
                     break;
                 }
-                case "Electronic":{
-
+                case "Electronics":{
+                    Intent intent = new Intent(view.getContext(), allElectronicsActivity.class);
+                    view.getContext().startActivity(intent);
                     break;
                 }
                 case "Collectibles":{
-
+                    Intent intent = new Intent(view.getContext(), allCollectibleActivity.class);
+                    view.getContext().startActivity(intent);
                     break;
                 }
                 case "Accessories":{
-
+                    Intent intent = new Intent(view.getContext(), allAccessoryActivity.class);
+                    view.getContext().startActivity(intent);
                     break;
                 }
             }

@@ -99,6 +99,7 @@ public class paymentActivity extends AppCompatActivity {
     User user;
     Transaction transaction;
     String uniqueId;
+    Boolean transactionStarted;
 
 
     public paymentActivity() throws ExecutionException, InterruptedException {
@@ -108,6 +109,7 @@ public class paymentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
+        transactionStarted = false;
         Intent intent = getIntent();
         getBundle();
        // credentials = Credentials.create(key);
@@ -127,7 +129,7 @@ public class paymentActivity extends AppCompatActivity {
 
         final ContractGasProvider gasProvider = new StaticGasProvider(gasPrice, customGasLimit);
         TransactionManager manager = new RawTransactionManager(web3, credentials, 200, 500);
-        final BankFactory bfContract = BankFactory.load("0x6a4392607d1B6C5A549C52963130f29356523E0e", web3, manager, gasProvider);
+        final BankFactory bfContract = BankFactory.load("0x7Fc7E366cBEAf00daafe771af27c21A097711284", web3, manager, gasProvider);
         ExecutorService es = Executors.newCachedThreadPool();
         //temporary for testing
         String status = "Funds released";
@@ -149,6 +151,7 @@ public class paymentActivity extends AppCompatActivity {
                    String a = String.valueOf(bfContract.createBank(senderAddress,receiverAddress,uniqueId,value).send());
                     bigint = String.valueOf(bfContract.getBankDetails(uniqueId).send());
                     Log.v(TAG,"successfully created transaction");
+                    transactionStarted = true;
 
 
                 } catch (Exception e) {
@@ -164,6 +167,13 @@ public class paymentActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
+        if(transactionStarted){
+            Toast.makeText(this, "Successfully started transaction, payment moved to escrow", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Was unable to move funds to escrow", Toast.LENGTH_SHORT).show();
+
+        }
 
 
 
@@ -175,37 +185,7 @@ public class paymentActivity extends AppCompatActivity {
 //     //   ethgptv.setText(gasPrice.getGasPrice().toString());
         ethgptv.setText(bigint);
 
-//        Button releaseBTN = findViewById(R.id.releaseBTN);
-//        releaseBTN.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ExecutorService es = Executors.newCachedThreadPool();
-//                es.execute(new Runnable() {
-//
-//
-//
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            String bankAddress = bfContract.getBankAddress(uniqueId).send();
-//                            Bank bankContract = Bank.load(bankAddress, web3, credentials, gasPrice, customGasLimit);
-//                            TransactionReceipt receipt = bankContract.sendFunds().send();
-//
-//                            //String releasefunds = String.valueOf(bfContract.sendFunds(uniqueId).send());
-//                            Toast.makeText(getApplicationContext(),"Ether Funds released from Escrow",Toast.LENGTH_SHORT).show();   // <-- throws exception
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                            //Toast.makeText(getApplicationContext(),"Ether Funds not released from Escrow",Toast.LENGTH_SHORT).show();   // <-- throws exception
-//
-//                        }
-//                    }
-//
-//
-//        });
-//        }
-//
-//
-//        });
+
     }
 
     private void getBundle() {

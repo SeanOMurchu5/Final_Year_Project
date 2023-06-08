@@ -12,11 +12,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.finalyearproject.Adapter.ProductAdapter;
-import com.example.finalyearproject.Adapter.transactionHistoryAdapter;
 import com.example.finalyearproject.Domain.ProductDomain;
 import com.example.finalyearproject.Interface.OnDataReceiveCallback;
 import com.example.finalyearproject.R;
-import com.example.finalyearproject.Transaction;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,30 +23,28 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class allShoesActivity extends AppCompatActivity {
+public class allCollectibleActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
-    private RecyclerView shoesRecyclerView;
+    private RecyclerView collectiblesRV;
     DatabaseReference fireDB;
     ArrayList<ProductDomain> products;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_shoes);
+        setContentView(R.layout.activity_all_collectible);
         fireDB = FirebaseDatabase.getInstance().getReference("Products");
 
-        recyclerViewShoes();
-
+        recyclerViewCollectibles();
     }
 
-    private void recyclerViewShoes() {
+    private void recyclerViewCollectibles() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
-        shoesRecyclerView = findViewById(R.id.shoesRecyclerView);
-        shoesRecyclerView.setLayoutManager(linearLayoutManager);
+        collectiblesRV = findViewById(R.id.collectiblesRV);
+        collectiblesRV.setLayoutManager(linearLayoutManager);
 
         products = new ArrayList<>();
         adapter = new ProductAdapter(products);
-        shoesRecyclerView.setAdapter(adapter);
+        collectiblesRV.setAdapter(adapter);
         getFromFirebase(new OnDataReceiveCallback(){
             @Override
             public void onDataReceived(ArrayList list) {
@@ -58,7 +54,7 @@ public class allShoesActivity extends AppCompatActivity {
 
                 adapter = new ProductAdapter(products);
 
-                shoesRecyclerView.setAdapter(adapter);
+                collectiblesRV.setAdapter(adapter);
             }
 
             @Override
@@ -67,8 +63,6 @@ public class allShoesActivity extends AppCompatActivity {
             }
 
         });
-
-
     }
 
     private void getFromFirebase(OnDataReceiveCallback callback){
@@ -80,7 +74,7 @@ public class allShoesActivity extends AppCompatActivity {
                 ProductDomain productDomain = snapshot.getValue(ProductDomain.class);
                 Log.v(TAG, "inside purchase activity firebase fetch , product : "+productDomain.getUniqueId());
 
-                if(productDomain.getCategory().equalsIgnoreCase("Shoes")) {
+                if(productDomain.getCategory().equalsIgnoreCase("Collectible")) {
                     list.add(productDomain);
                     callback.onDataReceived(list);
                 }
